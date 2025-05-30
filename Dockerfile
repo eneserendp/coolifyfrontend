@@ -7,13 +7,14 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:stable-alpine
 COPY --from=builder /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Healthcheck ekle
+RUN apk add --no-cache curl
+
 HEALTHCHECK --interval=30s --timeout=3s \
-    CMD wget -q --spider http://localhost:3002/health || exit 1
+    CMD curl -f http://localhost:3002/ || exit 1
 
 EXPOSE 3002
 CMD ["nginx", "-g", "daemon off;"]

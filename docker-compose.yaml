@@ -16,9 +16,3 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`frontend.193.111.125.236.nip.io`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=3002"
-    networks:
-      - coolify_network
-
-networks:
-  coolify_network:
-    external: true
