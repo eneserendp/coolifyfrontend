@@ -15,6 +15,7 @@ function App() {
       const response = await axios.get('http://localhost:5000/api/users');
       setUsers(response.data);
     } catch (error) {
+      setMessage('Kullanıcılar yüklenirken hata oluştu');
       console.error('Error fetching users:', error);
     }
   };
