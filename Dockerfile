@@ -1,20 +1,20 @@
-FROM node:18-alpine
+# Build aşaması
+FROM node:18-alpine as builder
 
 WORKDIR /app
 
-# Install dependencies first for better caching
+# Bağımlılıkları kopyala ve yükle
 COPY package*.json ./
-RUN npm install
+RUN npm install --production
 
-# Copy source files
+# Kaynak kodları kopyala ve build al
 COPY . .
-
-# Build the app
 RUN npm run build
 
-# Install serve globally
-RUN npm install -g serve
+# Production aşaması
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3002
-
-CMD ["serve", "-s", "build", "-l", "3002"]
+CMD ["nginx", "-g", "daemon off;"]
