@@ -4,13 +4,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: eneserendp/coolifyfrontend:latest
+    container_name: frontend
     ports:
       - "3002:3002"
     environment:
       - NODE_ENV=production
+      - REACT_APP_API_URL=http://193.111.125.236:5000
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`frontend.193.111.125.236.nip.io`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=3002"
-      - "traefik.http.routers.frontend.entrypoints=web"
+    networks:
+      - coolify_network
+
+networks:
+  coolify_network:
+    external: true
