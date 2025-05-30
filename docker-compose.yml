@@ -1,9 +1,14 @@
-version: '3'
+version: '3.8'
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3002:3002"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`frontend.193.111.125.236.nip.io`)"
