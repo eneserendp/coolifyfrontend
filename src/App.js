@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// API URL'ini doğrudan belirtelim
-const API_URL = 'http://193.111.125.236:3002';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : 'http://193.111.125.236:5000';
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -15,11 +16,11 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/users`);
+      const response = await axios.get(`${API_URL}/users`);
       setUsers(response.data);
     } catch (error) {
+      console.error('API Error:', error.response || error);
       setMessage('Kullanıcılar yüklenirken hata oluştu');
-      console.error('Error fetching users:', error);
     }
   };
 

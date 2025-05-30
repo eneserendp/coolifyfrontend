@@ -1,35 +1,21 @@
 # Build stage
-FROM node:18-alpine AS builder
-
+FROM node:18-alpine as builder
 WORKDIR /app
-
-# Copy env files
-COPY .env* ./
-
-# Install dependencies
 COPY package*.json ./
-RUN npm install
-
-# Copy source files
+RUN npm install --production=false
 COPY . .
-
-# Build with env variables
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
-
-# Copy build files
+FROM nginx:stable-alpine
 COPY --from=builder /app/build /usr/share/nginx/html
-
-# Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Add bash for debugging
+RUN apk add --no-cache bash
+
+# Verify the built files exist
+RUN ls -la /usr/share/nginx/html
+
 EXPOSE 3002
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3002/ || exit 1
-
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

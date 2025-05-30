@@ -1,0 +1,11 @@
+version: '3'
+services:
+  frontend:
+    build: .
+    ports:
+      - "3002:3002"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`frontend.193.111.125.236.nip.io`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3002"
+      - "traefik.http.routers.frontend.entrypoints=web"
