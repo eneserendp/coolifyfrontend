@@ -1,14 +1,20 @@
-# Build stage
-FROM node:18-alpine AS builder
+FROM node:18-alpine
+
 WORKDIR /app
+
+# Install dependencies first for better caching
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN npm install
+
+# Copy source files
 COPY . .
+
+# Build the app
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
-COPY --from=builder /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Install serve globally
+RUN npm install -g serve
+
 EXPOSE 3002
-CMD ["nginx", "-g", "daemon off;"]
+
+CMD ["serve", "-s", "build", "-l", "3002"]
